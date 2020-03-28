@@ -1,2 +1,30 @@
 # WeChatBot-PCversion
-A robot that can reply text message from WeChat
+
+基于`Mocha-L`的项目[WechatPCAPI](https://github.com/Mocha-L/WechatPCAPI)二次开发，接入了`腾讯AI`和`思知机器人`以实现即时回复消息的功能，机器人部分代码来源于[EverydayWechat](https://github.com/sfyc23/EverydayWechat)
+
+项目基于PC端微信客户端开发，账号无需登录网页版，要求客户端版本固定，具体细节请移步上面↑的传送门
+
+## 功能
+
+- 回复单聊微信
+- 回复群聊中@自己的信息
+
+### 机器人
+
+- 图灵机器人：http://www.turingapi.com/（需求实名制认证，并每天免费数量只有 100 条）
+- 青云客智能聊天机器人：http://api.qingyunke.com/（无须申请，无数量限制，但有点智障，分手神器。分手神器，慎用）
+- 智能闲聊（腾讯）：https://ai.qq.com/product/nlpchat.shtml ( 申请使用，免费且无限量。大厂靠谱。)
+- 天行机器人 ：https://www.tianapi.com/apiview/47 (认证后有 7 万条免费使用。之后收费：1 万条/1 块钱)
+- 海知智能 ：https://ruyi.ai/ （功能很强大，不仅仅用于聊天。需申请 key，免费）
+- 思知对话机器人：https://www.ownthink.com/ (免费，可不申请 appid)
+- 一个AI：http://www.yige.ai/（免费且无数量限制。可自定义回复、对话、场景。但高级功能使用比较复杂。但已长时间没人维护）
+
+自己试用下来**腾讯**和**思知**的不错，天行是纯机器人，海知总是返回500错误
+
+**注册后把获得的key填入对应的py文件顶部**
+
+*有问题请询问API作者和机器人平台*
+
+## 免责声明
+
+项目仅为技术交流，不对任何其他目的造成的损失与纠纷负责
