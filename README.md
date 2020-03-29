@@ -2,7 +2,7 @@
 
 基于`Mocha-L`的项目[WechatPCAPI](https://github.com/Mocha-L/WechatPCAPI)二次开发，接入了`腾讯AI`和`思知机器人`以实现即时回复消息的功能，机器人部分代码来源于[EverydayWechat](https://github.com/sfyc23/EverydayWechat)
 
-项目基于PC端微信客户端开发，账号无需登录网页版，要求客户端版本固定，具体细节请移步上面↑的传送门
+项目基于PC端微信客户端开发，账号无需登录网页版，要求微信客户端版本固定（V2.7.1.82），具体细节请移步上面↑的传送门
 
 ## 功能
 
