@@ -2,7 +2,7 @@ from WechatPCAPI import WechatPCAPI
 import time
 import logging
 from queue import Queue
-import asyncio
+import threading
 import tencent_bot
 import sizhi_bot
 import re
@@ -27,7 +27,7 @@ def getAt(string):
         return False
 
 
-async def reply(message):
+def reply(message):
     """
     回复消息
     :param message: 收到待回复的消息
@@ -84,9 +84,7 @@ def on_message(message):
     :return: null
     """
     print(message)
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(reply(message))
-    loop.close()
+    threading.Thread(target=reply, args=(message,)).start()
 
 
 def main():
@@ -108,7 +106,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    threading.Thread(target=main).start()
+    threading.Thread(target=counter).start()
 
 
 """ 收到消息dict
