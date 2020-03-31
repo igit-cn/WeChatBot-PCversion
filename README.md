@@ -4,9 +4,9 @@
 
 项目基于PC端微信客户端开发，账号无需登录网页版，要求微信客户端版本固定（V2.7.1.82），具体细节请移步上面↑的传送门
 
-<img src="https://github.com/antares927/WeChatBot-PCversion/blob/master/img/Screenshot_20200331-112237_WeChat.jpg" width = 50% height = 50% />
-![](https://github.com/antares927/WeChatBot-PCversion/blob/master/img/Screenshot_20200331-112237_WeChat.jpg)
-![](https://github.com/antares927/WeChatBot-PCversion/blob/master/img/b474c483gy1gd9csgaltaj20tz1pxgvq.jpg)
+<img src="https://github.com/antares927/WeChatBot-PCversion/blob/master/img/Screenshot_20200331-112237_WeChat.jpg" width = 40% height = 40% />
+
+<img src="https://github.com/antares927/WeChatBot-PCversion/blob/master/img/b474c483gy1gd9csgaltaj20tz1pxgvq.jpg" width = 40% height = 40% />
 
 ## 功能
 
