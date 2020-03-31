@@ -4,10 +4,14 @@
 
 项目基于PC端微信客户端开发，账号无需登录网页版，要求微信客户端版本固定（V2.7.1.82），具体细节请移步上面↑的传送门
 
+![](https://github.com/antares927/WeChatBot-PCversion/blob/master/img/Screenshot_20200331-112237_WeChat.jpg)
+![](https://github.com/antares927/WeChatBot-PCversion/blob/master/img/b474c483gy1gd9csgaltaj20tz1pxgvq.jpg)
+
 ## 功能
 
 - 回复单聊微信
 - 回复群聊中@自己的信息
+- 通过另一个账号进行自动回复功能的开关（更改`test.py`的全局变量`monitor_wxid`，填入另一个账号的微信号）（PS：没试过文件传输助手，）
 
 ### 机器人
 
@@ -19,7 +23,7 @@
 - 思知对话机器人：https://www.ownthink.com/ (免费，可不申请 appid)
 - 一个AI：http://www.yige.ai/ (免费且无数量限制。可自定义回复、对话、场景。但高级功能使用比较复杂。但已长时间没人维护)
 
-自己试用下来**腾讯**和**思知**的不错，海知是纯机器人，天行总是返回500错误
+自己试用下来推荐思知；腾讯的识别范围很广，可以不仅仅作聊天机器人用，还能当百科全书，但聊天功能就比较弱智，经常性找不到回复，不过上下文结合不错；海知是纯机器人；天行总是返回500错误
 
 **注册后把获得的key填入对应的py文件顶部**
 
