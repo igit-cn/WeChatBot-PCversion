@@ -11,7 +11,7 @@
 
 - 回复单聊微信
 - 回复群聊中@自己的信息
-- 通过另一个账号进行自动回复功能的开关（更改`test.py`的全局变量`monitor_wxid`，填入另一个账号的微信号）（PS：没试过文件传输助手，）
+- 通过另一个账号进行自动回复功能的开关（更改`test.py`的全局变量`monitor_wxid`，填入另一个账号的微信号或者filehelper）**注：** 使用filehelper的时候记得把`on_message()`里`收到控制消息`的`if`的`message['data']['send_or_recv'][0] == '0'`改成1
 
 ### 机器人
 

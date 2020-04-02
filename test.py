@@ -6,11 +6,14 @@ import threading
 import tencent_bot
 import sizhi_bot
 import re
-
+import datetime
 
 logging.basicConfig(level=logging.INFO)
 queue_recved_message = Queue()
 wx_inst = 0
+auto_reply = False
+count = 0
+monitor_wxid = ''
 
 
 def getAt(string):
@@ -27,54 +30,100 @@ def getAt(string):
         return False
 
 
-def reply(message):
+def control(message):
     """
-    回复消息
-    :param message: 收到待回复的消息
-    :return: null
+    收到控制消息
+    :param message: 消息
+    :return: None
     """
-    if message['type'] == 'msg::single' and message['data']['send_or_recv'][0] == '0' and message['data']['data_type'] == '1':
-        msg = message['data']['msg']
+    global auto_reply, monitor_wxid
 
-        # 去除emoji
-        emoji = re.compile(r'\[.*?\]').findall(msg)
-        for a in emoji:
-            msg = msg.replace(a, "")
+    if message['data']['msg'] == 'on':
+        if auto_reply is True:
+            wx_inst.send_text(to_user=monitor_wxid, msg='already ON')
+            return
+        auto_reply = True
+        wx_inst.send_text(to_user=monitor_wxid, msg='auto reply ON')
+        return
+    if message['data']['msg'] == 'off':
+        if auto_reply is False:
+            wx_inst.send_text(to_user=monitor_wxid, msg='already OFF')
+            return
+        auto_reply = False
+        wx_inst.send_text(to_user=monitor_wxid, msg='auto reply OFF')
+        return
 
-        # 腾讯机器人
-        # msg = tencent_bot.get_response(message['data']['msg'], message['data']['from_nickname'])
-        # 思知机器人
-        msg = sizhi_bot.get_response(msg, message['data']['from_nickname'])
-        if msg:
-            time.sleep(len(msg) // 4)
-            wx_inst.send_text(to_user=message['data']['from_wxid'], msg=msg)
 
-    if message['type'] == 'msg::chatroom' and message['data']['send_or_recv'][0] == '0' and message['data']['data_type'] == '1':
-        # wx_inst.send_text(to_user=message['data']['from_chatroom_wxid'], msg='test')
-        msg = message['data']['msg']
-        if getAt(msg):
-            print("收到at")
+def reply_single(message):
+    """
+    单聊回复
+    :param message: 消息
+    :return: None
+    """
+    global auto_reply, count, monitor_wxid
 
-            # 去除所有at
-            allAt = re.compile(r'@(.*)\?').findall(msg)
-            for a in allAt:
-                msg = msg.replace(a, "")
-            msg = msg.replace("@", "")
-            msg = msg.replace("?", "")
+    msg = message['data']['msg']
+    # 去除emoji
+    emoji = re.compile(r'\[.*?\]').findall(msg)
+    for a in emoji:
+        msg = msg.replace(a, "")
+    # 腾讯机器人
+    # msg = tencent_bot.get_response(message['data']['msg'], message['data']['from_nickname'])
+    # 思知机器人
+    # msg = sizhi_bot.get_response(msg, message['data']['from_nickname'])
+    if msg:
+        time.sleep(len(msg) // 4)
+        wx_inst.send_text(to_user=message['data']['from_wxid'], msg=msg)
+        count += 1
+    return
 
-            # 去除emoji
-            emoji = re.compile(r'\[.*?\]').findall(msg)
-            for a in emoji:
-                msg = msg.replace(a, "")
 
-            print(msg)
-            # 腾讯机器人
-            # msg = tencent_bot.get_response(msg, message['data']['from_chatroom_wxid'])
-            # 思知机器人
-            msg = sizhi_bot.get_response(message['data']['msg'], message['data']['from_member_wxid'])
-            time.sleep(len(msg) // 4)
-            if msg:
-                wx_inst.send_text(to_user=message['data']['from_chatroom_wxid'], msg=msg)
+def reply_group(message):
+    """
+    群聊回复
+    :param msg: 消息
+    :return: None
+    """
+    global auto_reply, count, monitor_wxid
+
+    msg = message['data']['msg']
+    print("收到at")
+    # 去除所有at
+    allAt = re.compile(r'@(.*)\?').findall(msg)
+    for a in allAt:
+        msg = msg.replace(a, "")
+    msg = msg.replace("@", "")
+    msg = msg.replace("?", "")
+    # 去除emoji
+    emoji = re.compile(r'\[.*?\]').findall(msg)
+    for a in emoji:
+        msg = msg.replace(a, "")
+    print(msg)
+    # 腾讯机器人
+    # msg = tencent_bot.get_response(msg, message['data']['from_chatroom_wxid'])
+    # 思知机器人
+    # msg = sizhi_bot.get_response(message['data']['msg'], message['data']['from_member_wxid'])
+    time.sleep(len(msg) // 4)
+    if msg:
+        wx_inst.send_text(to_user=message['data']['from_chatroom_wxid'], msg=msg)
+        count += 1
+    return
+
+
+def counter():
+    global auto_reply, count, monitor_wxid
+
+    while True:
+        time.sleep(3600)
+        now = datetime.datetime.now().hour
+        wx_inst.send_text(to_user=monitor_wxid, msg='运行中，已回复' + str(count) + '条消息')
+        if now == 0 and auto_reply is False:
+            auto_reply = True
+            wx_inst.send_text(to_user=monitor_wxid, msg='auto reply ON')
+            count = 0
+        if now == 10 and auto_reply is True:
+            auto_reply = False
+            wx_inst.send_text(to_user=monitor_wxid, msg='auto reply OFF')
 
 
 def on_message(message):
@@ -84,7 +133,20 @@ def on_message(message):
     :return: null
     """
     print(message)
-    threading.Thread(target=reply, args=(message,)).start()
+    # 收到群聊消息且有@
+    if auto_reply and message['type'] == 'msg::chatroom' and message['data']['send_or_recv'][0] == '0' \
+            and message['data']['data_type'] == '1' and getAt(message['data']['msg']):
+        threading.Thread(target=reply_group, args=(message,)).start()
+        return
+    # 收到控制消息
+    if message['type'] == 'msg::single' and message['data']['from_wxid'] == monitor_wxid \
+            and message['data']['send_or_recv'][0] == '0' and (message['data']['msg'] == 'on' or message['data']['msg'] == 'off'):
+        threading.Thread(target=control, args=(message,)).start()
+        return
+    # 收到单聊消息
+    if auto_reply and message['type'] == 'msg::single' and message['data']['send_or_recv'][0] == '0' \
+            and message['data']['data_type'] == '1':
+        threading.Thread(target=reply_single, args=(message,)).start()
 
 
 def main():
@@ -106,9 +168,8 @@ def main():
 
 
 if __name__ == '__main__':
-    threading.Thread(target=main).start()
     threading.Thread(target=counter).start()
-
+    main()
 
 """ 收到消息dict
 单人
@@ -117,7 +178,7 @@ if __name__ == '__main__':
 'type': 'msg::single', 
 'data': {
     'data_type': '1', (1=文字, 还有3, 4, 43记不得是啥了, 不过分别对应图片、表情包、视频)
-    'send_or_recv': '0+[收到]', (0=受到, 1=发送)
+    'send_or_recv': '0+[收到]', (0=收到, 1=发送)
     'from_wxid': 'wxid_xxxxx', 
     'time': '2020-03-28 08:25:53', 
     'msg': '1', 
